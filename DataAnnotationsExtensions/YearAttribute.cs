@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using DataAnnotationsExtensions.Resources;
+using MvcUmbracoDataAnnotations;
 
 namespace DataAnnotationsExtensions
 {
@@ -9,7 +10,7 @@ namespace DataAnnotationsExtensions
     public class YearAttribute : DataTypeAttribute
     {
         private static Regex _regex = new Regex(@"^[0-9]{4}$");
-
+        private string _umbracoDictionaryKey = string.Empty;
         public string Regex
         {
             get
@@ -21,6 +22,13 @@ namespace DataAnnotationsExtensions
         public YearAttribute()
             : base("year")
         {
+
+        }
+
+        public YearAttribute(string umbracoDictionaryKey)
+            : base("year")
+        {
+           _umbracoDictionaryKey= umbracoDictionaryKey ;
         }
 
         public override string FormatErrorMessage(string name)
@@ -29,7 +37,10 @@ namespace DataAnnotationsExtensions
             {
                 ErrorMessage = ValidatorResources.YearAttribute_Invalid;
             }
-
+            if (_umbracoDictionaryKey != string.Empty)
+            {
+                ErrorMessage = Helper.GetDictionaryItem(_umbracoDictionaryKey);
+            }
             return base.FormatErrorMessage(name);
         }
 

@@ -10,7 +10,7 @@ namespace DataAnnotationsExtensions
     public class CuitAttribute : DataTypeAttribute
     {
         private static Regex _regex = new Regex(@"^[0-9]{2}-?[0-9]{8}-?[0-9]$");
-
+  
         public string Regex
         {
             get

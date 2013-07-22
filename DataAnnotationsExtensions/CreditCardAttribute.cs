@@ -2,15 +2,22 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using DataAnnotationsExtensions.Resources;
+using MvcUmbracoDataAnnotations;
 
 namespace DataAnnotationsExtensions
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class CreditCardAttribute : DataTypeAttribute
     {
+        private string _umbracoDictionaryKey = string.Empty;
         public CreditCardAttribute()
             : base("creditcard")
         {
+        }
+
+        public CreditCardAttribute(string umbracoDictionaryKey):base("creditcard")
+        {
+            _umbracoDictionaryKey = umbracoDictionaryKey;        
         }
 
         public override string FormatErrorMessage(string name)
@@ -19,7 +26,10 @@ namespace DataAnnotationsExtensions
             {
                 ErrorMessage = ValidatorResources.CreditCardAttribute_Invalid;
             }
-
+            if (_umbracoDictionaryKey != string.Empty)
+            {
+                ErrorMessage = Helper.GetDictionaryItem(_umbracoDictionaryKey);
+            }
             return base.FormatErrorMessage(name);
         }
 

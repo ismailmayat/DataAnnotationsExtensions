@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using DataAnnotationsExtensions.Resources;
+using MvcUmbracoDataAnnotations;
 
 namespace DataAnnotationsExtensions
 {
@@ -11,7 +12,7 @@ namespace DataAnnotationsExtensions
         public object Max { get { return _max; } }
 
         private readonly double _max;
-
+        private string _umbracoDictionaryKey = string.Empty;
         public MaxAttribute(int max)
             : base("max")
         {
@@ -24,13 +25,30 @@ namespace DataAnnotationsExtensions
             _max = max;
         }
 
+        public MaxAttribute(int max, string umbracoDictionaryKey)
+            : base("max")
+        {
+            _max = max;
+            _umbracoDictionaryKey = umbracoDictionaryKey;
+        }
+
+        public MaxAttribute(double max, string umbracoDictionaryKey)
+            : base("max")
+        {
+            _max = max;
+            _umbracoDictionaryKey = umbracoDictionaryKey;
+        }
+
         public override string FormatErrorMessage(string name)
         {
             if (ErrorMessage == null && ErrorMessageResourceName == null)
             {
                 ErrorMessage = ValidatorResources.MaxAttribute_Invalid;
             }
-
+            if (_umbracoDictionaryKey != string.Empty)
+            {
+                ErrorMessage = Helper.GetDictionaryItem(_umbracoDictionaryKey);
+            }
             return String.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, _max);
         }
 

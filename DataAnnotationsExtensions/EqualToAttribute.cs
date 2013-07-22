@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using DataAnnotationsExtensions.Resources;
+using MvcUmbracoDataAnnotations;
 
 namespace DataAnnotationsExtensions
 {
@@ -16,6 +17,7 @@ namespace DataAnnotationsExtensions
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class EqualToAttribute : ValidationAttribute
     {
+        private string _umbracoDictionaryKey = string.Empty;
         public EqualToAttribute(string otherProperty)
         {
             if (otherProperty == null)
@@ -25,6 +27,21 @@ namespace DataAnnotationsExtensions
             OtherProperty = otherProperty;
             OtherPropertyDisplayName = null;
         }
+
+
+        public EqualToAttribute(string otherProperty, string umbracoDictionaryKey)
+        {
+            if (otherProperty == null)
+            {
+                throw new ArgumentNullException("otherProperty");
+            }
+
+            _umbracoDictionaryKey = umbracoDictionaryKey;
+
+            OtherProperty = otherProperty;
+            OtherPropertyDisplayName = null;
+        }
+
 
         public string OtherProperty { get; private set; }
 
@@ -36,7 +53,10 @@ namespace DataAnnotationsExtensions
             {
                 ErrorMessage = ValidatorResources.CompareAttribute_MustMatch;
             }
-
+            if (_umbracoDictionaryKey != string.Empty)
+            {
+                ErrorMessage = Helper.GetDictionaryItem(_umbracoDictionaryKey);
+            }
             var otherPropertyDisplayName = OtherPropertyDisplayName ?? OtherProperty;
 
             return String.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, otherPropertyDisplayName);
